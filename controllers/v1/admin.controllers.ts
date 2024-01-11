@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { CreateRestaurantInputs } from "../dto";
-import { Restaurant } from "../models";
-import { generateSalt, hashPassword } from "../utility";
+import { CreateRestaurantInputs } from "../../dto";
+import { Restaurant } from "../../models";
+import { generateSalt, hashPassword } from "../../utility";
 
 export const findRestaurant = async(id: string | undefined, email?: string) => {
     return email ? Restaurant.findOne({email}).exec() : Restaurant.findById(id).exec();

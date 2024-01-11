@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { LoginRestaurantInputs } from '../dto';
+import { EditRestaurantInputs, LoginRestaurantInputs } from '../../dto';
 import { findRestaurant } from '.';
-import { generateSignature, validatePassword } from '../utility';
+import { generateSignature, validatePassword } from '../../utility';
+import { Restaurant } from '../../models';
 
 export const restaurantLogin = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -74,14 +75,44 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
 }
 export const updateProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const user = req.user;
+        const body = <EditRestaurantInputs>req.body;
 
+        if (user) {
+            const updatedRestaurant = await Restaurant.findByIdAndUpdate(user.id, {$set: body}, {new: true});
+            if (updatedRestaurant) {
+                return res.status(200).json({
+                    success: true,
+                    data: updatedRestaurant,
+                    error: null
+                });
+            }
+        }
     } catch (error) {
         next(error)
     }
 }
 export const updateServiceAvailable = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const user = req.user;
 
+        if (user) {
+            const restaurant = await findRestaurant(user.id);            
+
+            if (restaurant) {
+                restaurant.serviceAvailable = !restaurant.serviceAvailable;
+                const updatedRestaurant = await restaurant.save();
+
+                if (updatedRestaurant) {
+                    return res.status(200).json({
+                        success: true,
+                        data: updatedRestaurant,
+                        error: null
+                    });
+                }
+            }
+            
+        }
     } catch (error) {
         next(error);
     }

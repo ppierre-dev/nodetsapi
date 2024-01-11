@@ -1,6 +1,6 @@
 import express from 'express';
-import { getProfile, restaurantLogin, updateProfile, updateServiceAvailable } from '../controllers';
-import { authenticate } from '../middlewares';
+import { getProfile, restaurantLogin, updateProfile, updateServiceAvailable } from '../../controllers/v1';
+import { authenticate } from '../../middlewares';
 
 const router = express.Router();
 
