@@ -1,7 +1,14 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
+import { getProfile, restaurantLogin, updateProfile, updateServiceAvailable } from '../controllers';
+import { authenticate } from '../middlewares';
 
 const router = express.Router();
 
-router.get('/', (req: Request, res: Response, next: NextFunction) => res.json("Hello World"));
+router.post('/login', restaurantLogin);
+
+router.use(authenticate);
+router.get('/profile', getProfile);
+router.patch('/profile', updateProfile);
+router.patch('/service', updateServiceAvailable);
 
 export { router as RestaurantRoute }
