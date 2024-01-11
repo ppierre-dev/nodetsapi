@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { EditRestaurantInputs, LoginRestaurantInputs } from '../../dto';
+import { CreateFoodInputs, EditRestaurantInputs, LoginRestaurantInputs } from '../../dto';
 import { findRestaurant } from '.';
 import { generateSignature, validatePassword } from '../../utility';
-import { Restaurant } from '../../models';
+import { Restaurant, Food } from '../../models';
 
 export const restaurantLogin = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -112,6 +112,53 @@ export const updateServiceAvailable = async (req: Request, res: Response, next: 
                 }
             }
             
+        }
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const createFood = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user;
+        
+        if (user) {
+            const body = <CreateFoodInputs>req.body;
+            const restaurant = await findRestaurant(user.id);
+
+            if (restaurant) {
+                const createdFood = await Food.create({...body, restaurantId: restaurant._id});
+                restaurant.foods.push(createdFood._id);
+                await restaurant.save();
+
+                if (createdFood) {
+                    return res.status(201).json({
+                        success: true,
+                        data: createdFood,
+                        error: null
+                    });
+                }
+            }
+        }
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const getFoods = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user;
+
+        if (user) {
+            const restaurant = await findRestaurant(user.id);
+
+            if (restaurant) {
+                return res.status(200).json({
+                    success: true,
+                    data: restaurant.foods,
+                    error: null
+                });
+            }
         }
     } catch (error) {
         next(error);

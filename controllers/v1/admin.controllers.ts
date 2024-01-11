@@ -4,7 +4,7 @@ import { Restaurant } from "../../models";
 import { generateSalt, hashPassword } from "../../utility";
 
 export const findRestaurant = async(id: string | undefined, email?: string) => {
-    return email ? Restaurant.findOne({email}).exec() : Restaurant.findById(id).exec();
+    return email ? Restaurant.findOne({email}).populate("foods").exec() : Restaurant.findById(id).populate("foods").exec();
 }
 
 export const createRestaurant = async (req: Request, res: Response, next: NextFunction) => {
