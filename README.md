@@ -16,5 +16,3 @@ Exemple de payload :
     "password": "qwerty"
 }
 ```
-
-## Comming soon
