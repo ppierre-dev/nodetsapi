@@ -1,24 +1,17 @@
 import express from 'express';
-import mongoose from 'mongoose';
-import { MONGO_URI } from './config/dbConnection';
-import { errorHandler } from './middlewares';
-import { apiRoute } from './routes/api.routes';
+import App from './services/ExpressApp';
+import Database from './services/Database';
 
-const app = express();
+const startServer = async () => {
+    const app = express();
 
-mongoose.connect(MONGO_URI).then(() => {
-    console.log("✅ Connected to MongoDB");
-}).catch((err) => {
-    console.log("❌ Error while connecting to MongoDB", err);
-});
+    await App(app);
+    await Database();
+    
+    app.listen(8000, () => {
+        console.clear();
+        console.log("✅ Server is running on port 8000");
+    });
+}
 
-app.use(express.json()); // Middleware to parse JSON body
-
-app.use('/api', apiRoute);
-
-app.use(errorHandler);
-
-app.listen(8000, () => {
-    console.clear();
-    console.log("✅ Server is running on port 8000");
-});
+startServer();
