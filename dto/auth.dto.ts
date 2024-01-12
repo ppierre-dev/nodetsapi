@@ -1,3 +1,3 @@
-import { RestaurantPayload } from ".";
+import { CustomerPayload, RestaurantPayload } from ".";
 
-export type AuthPayload = RestaurantPayload;
+export type AuthPayload = RestaurantPayload | CustomerPayload;
